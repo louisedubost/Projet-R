@@ -150,3 +150,5 @@ map <- leaflet() %>%
 
 # Afficher la carte
 return(map)
+
+getwd()

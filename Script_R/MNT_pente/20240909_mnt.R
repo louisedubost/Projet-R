@@ -21,18 +21,19 @@ setwd("C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente")
 # Récupération du MNT de la zone d'étude à partir de l'IGN
 ## Importation du cadastre de la zone d'étude COMPARER PCI et BDP!!!???
 
-cod_post = "74420"
+code_post = "74420"
 libelle <- "SAXEL"
-
-info_com <- get_apicarto_codes_postaux(cod_post)
-ligne_saxel <- which(info_com$libelleAcheminement == libelle)
-code_insee2 <- info_com[info_com$nomCommune == "nom_com", "codeCommune"]
-
-
-cod_insee <- "74261" # a récupérer de manière automatique depuis com
 num_parc <- "2594"
 section <- "0A"
-zone_parca <- get_apicarto_cadastre(cod_insee,
+
+# fun.code.insee<- function(code_post, libelle){
+#   info_com <- get_apicarto_codes_postaux(code_post)
+#   ligne <- which(info_com$libelleAcheminement == libelle)
+#   code_insee <- info_com$codeCommune[[ligne]]
+#   return(code_insee)
+# }
+code_insee = "74261"
+zone_parca <- get_apicarto_cadastre(code_insee,
                                     type = "parcelle",
                                     code_com = NULL,
                                     section = section, #section de parcelle, vérifié sur géoportail

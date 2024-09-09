@@ -68,8 +68,12 @@ create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
   cway_zone <- osmdata_sf(opq_bbox)
   
   # Vérifier si les lignes OSM sont déjà au format sf
-  if (!inherits(cway_zone$osm_lines, "sf")) {
-    cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines) # rajouter une condition pour les NULL, fonction dim si dataframe
+  if (!is.null(cway_zone$osm_lines)) {
+    if (!inherits(cway_zone$osm_lines, "sf")) {
+      cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines)
+    }
+  } else {
+    message("Aucune donnée OSM pour les lignes n'a été trouvée.")
   }
   
   # Créer la carte
@@ -93,7 +97,7 @@ create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
 
 # Interroger une parcelle spécifique
 Nancy_parca_pci <- get_apicarto_cadastre(
-  x = "54395",               # Code INSEE en tant que chaîne
+  x = "52023",               # Code INSEE en tant que chaîne
   type = "parcelle",         # Type de données : parcelle
   code_com = NULL,           # Optionnel
   #section = "0A",            # Section (vérifie si "OA" est correct pour cette commune)   # Numéros de parcelle (en boucle si nécessaire)
@@ -120,10 +124,11 @@ create_osm_map(zone_etude, osm_key, osm_value)
 # réparation fonction ----
 
 explore_osm_keys()
-get_osm_values("forestry")
+get_osm_values("highway")
 
-osm_key <- "forestry"
-osm_value <- "yes"
+osm_key_inuatilisables <- "forestry"
+osm_key <- "highway"
+osm_value <- "cycleway"
 
 # Convertir zone_etude en bbox
 bbox <- st_bbox(zone_etude)
@@ -137,8 +142,15 @@ opq_bbox <- opq(bbox = bbox_vector) %>%
 cway_zone <- osmdata_sf(opq_bbox)
 
 # Vérifier si les lignes OSM sont déjà au format sf
-if (!inherits(cway_zone$osm_lines, "sf")) {
-  cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines) # rajouter une condition pour les NULL, fonction dim si dataframe
+if (!is.null(cway_zone$osm_lines)) {
+  # Vérifier si cway_zone$osm_lines est déjà au format sf, sinon le convertir
+  if (!inherits(cway_zone$osm_lines, "sf")) {
+    cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines)
+  }
+} else {
+  # Si aucune donnée OSM n'est trouvée, créer une géométrie vide par défaut
+  cway_zone$osm_lines <- st_sf(geometry = st_sfc())  # Géométrie vide
+  message("Aucune donnée OSM pour les lignes n'a été trouvée. Une géométrie vide a été créée.")
 }
 
 # Créer la carte
@@ -149,3 +161,82 @@ map <- leaflet() %>%
 
 # Afficher la carte
 return(map)
+
+
+### Fonction pour obtenir toutes les clés et valeurs avec des données non NULL dans la zone d'étude ----
+get_osm_keys_values <- function(zone_etude) {
+  
+  # Convertir la zone d'étude en bbox
+  bbox <- st_bbox(zone_etude)
+  bbox_vector <- c(bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"])
+  
+  # Récupérer toutes les clés disponibles dans OSM
+  all_keys <- available_features()
+  
+  # Liste pour stocker les résultats
+  keys_values_with_data <- list()
+  
+  # Liste pour stocker les clés problématiques
+  problematic_keys <- list()
+  
+  # Boucle à travers toutes les clés
+  for (osm_key in all_keys) {
+    
+    # Essayer de récupérer les valeurs possibles pour cette clé
+    possible_values <- tryCatch({
+      available_tags(osm_key)
+    }, error = function(e) {
+      # Si la clé est invalide ou pose un problème, ajouter à la liste des clés problématiques et passer à la suivante
+      message(paste("Clé problématique rencontrée :", osm_key, " - Erreur :", e$message))
+      problematic_keys[[length(problematic_keys) + 1]] <- osm_key
+      return(NULL)
+    })
+    
+    # Si possible_values est NULL, passer à la prochaine clé
+    if (is.null(possible_values)) next
+    
+    # Boucler à travers les valeurs possibles pour cette clé
+    for (osm_value in possible_values) {
+      
+      # Créer une requête OSM pour la clé et la valeur
+      opq_query <- opq(bbox = bbox_vector) %>%
+        add_osm_feature(key = osm_key, value = osm_value)
+      
+      # Télécharger les données OSM sous forme de sf
+      osm_data <- tryCatch({
+        osmdata_sf(opq_query)
+      }, error = function(e) {
+        # Si un problème survient lors de la récupération des données, ignorer cette combinaison clé/valeur
+        message(paste("Erreur lors de la récupération des données pour la clé :", osm_key, "et la valeur :", osm_value))
+        next
+      })
+      
+      # Vérifier si des données OSM non NULL sont présentes
+      if (!is.null(osm_data$osm_points) || !is.null(osm_data$osm_lines) || !is.null(osm_data$osm_polygons)) {
+        
+        # Ajouter la clé et la valeur dans la liste des résultats s'il y a des données
+        if (is.null(keys_values_with_data[[osm_key]])) {
+          keys_values_with_data[[osm_key]] <- list()
+        }
+        keys_values_with_data[[osm_key]] <- append(keys_values_with_data[[osm_key]], osm_value)
+      }
+    }
+  }
+  
+  # Créer un rapport final sur les clés problématiques
+  message("Clés problématiques rencontrées :", paste(problematic_keys, collapse = ", "))
+  
+  # Retourner les clés/valeurs avec des données disponibles et les clés problématiques
+  return(list("data" = keys_values_with_data, "problematic_keys" = problematic_keys))
+}
+
+  
+# Appeler la fonction pour obtenir toutes les clés et valeurs avec des données disponibles
+osm_keys_values <- get_osm_keys_values(zone_etude)
+
+# Afficher les résultats
+print(osm_keys_values)
+
+# Afficher les résultats
+View(osm_keys_values$keys_values_with_data)  # Clés et valeurs avec des données
+View(osm_keys_values$problematic_keys)

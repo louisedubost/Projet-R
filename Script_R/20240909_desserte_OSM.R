@@ -54,6 +54,36 @@ get_osm_values <- function(osm_key) {
   return(values_df)
 }
 
+# Fonction simple pour récupérer les clés OSM contenant des données
+get_osm_keys_with_data <- function(zone_etude) {
+  # Convertir la zone d'étude en bbox
+  bbox <- st_bbox(zone_etude)
+  bbox_vector <- c(bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"])
+  
+  # Récupérer toutes les clés OSM disponibles
+  all_keys <- available_features()
+  
+  # Initialiser une liste pour stocker les clés avec des données
+  keys_with_data <- c()
+  
+  # Boucler à travers chaque clé pour vérifier si des données sont disponibles
+  for (osm_key in all_keys) {
+    opq_query <- opq(bbox = bbox_vector) %>%
+      add_osm_feature(key = osm_key)
+    
+    osm_data <- tryCatch({
+      osmdata_sf(opq_query)
+    }, error = function(e) NULL)
+    
+    # Ajouter la clé à la liste si elle contient des données
+    if (!is.null(osm_data) && (!is.null(osm_data$osm_points) || !is.null(osm_data$osm_lines) || !is.null(osm_data$osm_polygons))) {
+      keys_with_data <- c(keys_with_data, osm_key)
+    }
+  }
+  
+  return(keys_with_data)
+}
+
 # Fonction pour créer une carte avec les données OSM basées sur une zone d'étude
 create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
   # Convertir zone_etude en bbox
@@ -162,85 +192,12 @@ map <- leaflet() %>%
 # Afficher la carte
 return(map)
 
-<<<<<<< HEAD
+## ----
+# Fonction permettant de créer deux listes une avec des keys contenant des données et l'autres non
 
-### Fonction pour obtenir toutes les clés et valeurs avec des données non NULL dans la zone d'étude ----
-get_osm_keys_values <- function(zone_etude) {
-  
-  # Convertir la zone d'étude en bbox
-  bbox <- st_bbox(zone_etude)
-  bbox_vector <- c(bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"])
-  
-  # Récupérer toutes les clés disponibles dans OSM
-  all_keys <- available_features()
-  
-  # Liste pour stocker les résultats
-  keys_values_with_data <- list()
-  
-  # Liste pour stocker les clés problématiques
-  problematic_keys <- list()
-  
-  # Boucle à travers toutes les clés
-  for (osm_key in all_keys) {
-    
-    # Essayer de récupérer les valeurs possibles pour cette clé
-    possible_values <- tryCatch({
-      available_tags(osm_key)
-    }, error = function(e) {
-      # Si la clé est invalide ou pose un problème, ajouter à la liste des clés problématiques et passer à la suivante
-      message(paste("Clé problématique rencontrée :", osm_key, " - Erreur :", e$message))
-      problematic_keys[[length(problematic_keys) + 1]] <- osm_key
-      return(NULL)
-    })
-    
-    # Si possible_values est NULL, passer à la prochaine clé
-    if (is.null(possible_values)) next
-    
-    # Boucler à travers les valeurs possibles pour cette clé
-    for (osm_value in possible_values) {
-      
-      # Créer une requête OSM pour la clé et la valeur
-      opq_query <- opq(bbox = bbox_vector) %>%
-        add_osm_feature(key = osm_key, value = osm_value)
-      
-      # Télécharger les données OSM sous forme de sf
-      osm_data <- tryCatch({
-        osmdata_sf(opq_query)
-      }, error = function(e) {
-        # Si un problème survient lors de la récupération des données, ignorer cette combinaison clé/valeur
-        message(paste("Erreur lors de la récupération des données pour la clé :", osm_key, "et la valeur :", osm_value))
-        next
-      })
-      
-      # Vérifier si des données OSM non NULL sont présentes
-      if (!is.null(osm_data$osm_points) || !is.null(osm_data$osm_lines) || !is.null(osm_data$osm_polygons)) {
-        
-        # Ajouter la clé et la valeur dans la liste des résultats s'il y a des données
-        if (is.null(keys_values_with_data[[osm_key]])) {
-          keys_values_with_data[[osm_key]] <- list()
-        }
-        keys_values_with_data[[osm_key]] <- append(keys_values_with_data[[osm_key]], osm_value)
-      }
-    }
-  }
-  
-  # Créer un rapport final sur les clés problématiques
-  message("Clés problématiques rencontrées :", paste(problematic_keys, collapse = ", "))
-  
-  # Retourner les clés/valeurs avec des données disponibles et les clés problématiques
-  return(list("data" = keys_values_with_data, "problematic_keys" = problematic_keys))
-}
+# Charger les packages nécessaires
 
-  
-# Appeler la fonction pour obtenir toutes les clés et valeurs avec des données disponibles
-osm_keys_values <- get_osm_keys_values(zone_etude)
+# Exemple d'utilisation (remplacez par votre zone d'étude réelle)
+result <- get_osm_keys_with_data(zone_etude)
+print(result)
 
-# Afficher les résultats
-print(osm_keys_values)
-
-# Afficher les résultats
-View(osm_keys_values$keys_values_with_data)  # Clés et valeurs avec des données
-View(osm_keys_values$problematic_keys)
-=======
-getwd()
->>>>>>> aa3d3ac01eab8f3fe9b27961b8b465417f5cec1a

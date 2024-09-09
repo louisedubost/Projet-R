@@ -123,3 +123,8 @@ st_write(troncon_hydro_l93, "pplmt_data.gpkg", layer = "troncon_hydro", append =
 
 writeRaster(IRC, "pplmt_data.gpkg", filetype = "GPKG", gdal = c("APPEND_SUBDATASET=YES", "RASTER_table=IRC"))
 writeRaster(MNH, "pplmt_data.gpkg", filetype = "GPKG", gdal = c("APPEND_SUBDATASET=YES", "RASTER_table=MNH"))
+
+
+# suite
+# test 2
+####

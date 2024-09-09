@@ -162,6 +162,7 @@ map <- leaflet() %>%
 # Afficher la carte
 return(map)
 
+<<<<<<< HEAD
 
 ### Fonction pour obtenir toutes les clés et valeurs avec des données non NULL dans la zone d'étude ----
 get_osm_keys_values <- function(zone_etude) {
@@ -240,3 +241,6 @@ print(osm_keys_values)
 # Afficher les résultats
 View(osm_keys_values$keys_values_with_data)  # Clés et valeurs avec des données
 View(osm_keys_values$problematic_keys)
+=======
+getwd()
+>>>>>>> aa3d3ac01eab8f3fe9b27961b8b465417f5cec1a

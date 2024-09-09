@@ -115,6 +115,8 @@ osm_key <- "route"   # Par exemple "highway" pour les routes
 osm_value <- "foot"       # Par exemple "*" pour toutes les routes (ou un type spécifique comme "residential")
 create_osm_map(zone_etude, osm_key, osm_value)
 
+
+
 # réparation fonction ----
 
 explore_osm_keys()
@@ -133,9 +135,6 @@ opq_bbox <- opq(bbox = bbox_vector) %>%
 
 # Exécuter la requête et obtenir les données
 cway_zone <- osmdata_sf(opq_bbox)
-class(opq_bbox)
-str(opq_bbox)
-names(opq_bbox)
 
 # Vérifier si les lignes OSM sont déjà au format sf
 if (!inherits(cway_zone$osm_lines, "sf")) {

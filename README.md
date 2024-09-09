@@ -31,3 +31,10 @@ Plutôt à réaliser sur QGIS ce projet
 6-	Créer une fonction qui fait des buffers de part de d’autres de la desserte en prennant en compte la pente
 
 7-	En sortie : faire un raster et créer des indices d’exploitabilité (surface accessible /surface de forêt)
+
+# Structuration du GitHub
+
+## Nom des sccripts R
+
+Les scripts R sont nommés de la manière suivante: annéemoisjour_sujet
+Exemple: 20240909_mnt --> script créé le 09 septembre 2024, traitant du MNT. 

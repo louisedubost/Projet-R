@@ -11,12 +11,15 @@ tmap_mode("view")
 # Set working directory ----
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# Fonctions intermédiaires ----
-code_post = "74420"
-libelle <- "SAXEL"
-section <- "0A"
-num_parc <- "2594"
+# Fonctions temporaires ----
+draw <- function(raster,vecteur){
+  tm_shape(raster)+
+    tm_raster()+
+    tm_shape(vecteur)+
+    tm_borders("black", lwd = 2)
+}
 
+# Fonctions intermédiaires ----
 
 code.insee <- function(code_post, libelle){
   info_com <- get_apicarto_codes_postaux(code_post)
@@ -24,8 +27,6 @@ code.insee <- function(code_post, libelle){
   code_insee <- info_com$codeCommune[[ligne]]
   return(code_insee)
 }
-
-#code_insee <- code.insee(code_post, libelle)
 
 get.cadastre <- function(code_insee, section, num_parc){
   zone_parca <- get_apicarto_cadastre(code_insee,
@@ -39,14 +40,13 @@ get.cadastre <- function(code_insee, section, num_parc){
   return(zone_parca)
 }
 
-#zone_parca <- get.cadastre(code_insee, section, num_parc)
-
 get.mnt <- function(zone_parca){
   mnt_layer_name <- "ELEVATION.ELEVATIONGRIDCOVERAGE"
-  mnt <- get_wms_raster(x = zone_parca,
+  zone_parca_buffered <- st_buffer(zone_parca, dist = 1000)
+  mnt <- get_wms_raster(x = zone_parca_buffered,
                         layer = mnt_layer_name, 
                         crs = 2154,
-                        res = 10,
+                        res = 25,
                         rgb = FALSE,
                         filename = "mnt.tif",
                         overwrite = TRUE
@@ -54,9 +54,7 @@ get.mnt <- function(zone_parca){
   return(mnt)
 }
 
-#mnt <- get.mnt(zone_parca)  # rajouter un buffer de 1000m autour des parcelles
-
-slope <- function(mnt){
+calculate.slope <- function(mnt){
   classes <- c(0, 5, 15, 30, 45, 60, 90)
   pente <- terrain(mnt,
                    v = "slope",
@@ -68,8 +66,6 @@ slope <- function(mnt){
   return(pente_classee)
 }
 
-#pente <- slope(mnt)
-
 save.raster.gpkg <- function(SpatRaster) {
   layer_name <- names(SpatRaster)
   writeRaster(SpatRaster,
@@ -79,8 +75,6 @@ save.raster.gpkg <- function(SpatRaster) {
                        paste0("RASTER_TABLE=", layer_name))
   )
 }
-
-#save.raster.gpkg(pente)
 
 save.sf.gpkg <- function(sf) {
   gpkg_path <- paste0(dirname(rstudioapi::getActiveDocumentContext()$path),"/pente.gpkg")
@@ -92,24 +86,10 @@ save.sf.gpkg <- function(sf) {
            )
 }
 
-#save.sf.gpkg(zone_parca)
-
 save.gpkg <- function(SpatRaster, sf){
   save.raster.gpkg(SpatRaster)
   save.sf.gpkg(sf)
-}
-
-#save.gpkg(pente, zone_parca) # attention, il tout mettre en 2154!
-
-# Fonctions temporaires ----
-draw <- function(raster,vecteur){
-  tm_shape(raster)+
-    tm_raster()+
-  tm_shape(vecteur)+
-    tm_borders("black", lwd = 2)
-}
-
-representation <- draw(pente, zone_parca)
+}  
 
 # Fonction principale ----
 
@@ -117,8 +97,16 @@ get.slope <- function(code_post, libelle, section, num_parc){
   code_insee <- code.insee(code_post, libelle)
   zone_parca <- get.cadastre(code_insee, section, num_parc)
   mnt <- get.mnt(zone_parca)
-  pente <- slope(mnt)
+  pente <- calculate.slope(mnt)
   save.gpkg(pente, zone_parca)
+  draw(pente, zone_parca)
 }
+
+# Exemple ---- 
+
+code_post = "74420"
+libelle <- "SAXEL"
+section <- "0A"
+num_parc <- "2594"
 
 get.slope(code_post, libelle, section, num_parc)

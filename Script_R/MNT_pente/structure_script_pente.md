@@ -9,7 +9,6 @@ Structure du script pentes MNT
   
 # SORTIE
 -	Fichier geopackage avec les couches suivantes :  
-  o	MNT (raster)  
  	o	Cadastre non corrigé (vecteur)  
  	o	Pentes catégorisées (raster)  
 
@@ -35,15 +34,15 @@ Structure du script pentes MNT
  o	Entrée : SpatRaster  
  o	Sortie : raster enregistré au nom du SpatRaster dans un gpkg 'pente.gpkg"     
 
- -save.vector.gpkg: 
+ -save.sf.gpkg: 
  o	Entrée : SpatVector  
  o	Sortie : vecteur enregistré au nom du SpatVector dans un gpkg 'pente.gpkg"  
 
--	geopackage :  
-  o	Entrée : liste de couches en format raster ou vecteur (possible de mélanger les 2 ?)  
- 	o	Sortie : un géopackage comprenant toutes les couches   
+-	save.gpkg :   
+  o	Entrée : un SpatRaster et un sf  
+ 	o	Sortie : un géopackage comprenant les deux couches    
 
-# FONCTIONS TEMPORAIRES EN DEHORS DU SCRIPT :
+# FONCTIONS TEMPORAIRES EN DEHORS DU SCRIPT :  
 -	draw :  OK  
   o	Entrée : 1 couche format vecteur, 1 couche format raster  
  	o	Sortie : plot dynamique des couches  

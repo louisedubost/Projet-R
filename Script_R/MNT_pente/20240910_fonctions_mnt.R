@@ -110,6 +110,12 @@ draw <- function(raster,vecteur){
 
 representation <- draw(pente, zone_parca)
 
-# Fonction finale ----
+# Fonction principale ----
 
-
+get.slope <- function(code_post, libelle, section, num_parc){
+  code_insee <- code.insee(code_post, libelle)
+  zone_parca <- get.cadastre(code_insee, section, num_parc)
+  mnt <- get.mnt(zone_parca)
+  pente <- slope(mnt)
+  save.gpkg(pente, zone_parca)
+}

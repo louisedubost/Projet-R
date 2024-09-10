@@ -4,8 +4,8 @@ Structure du script pentes MNT
 # ENTREE
 -	Code postale  : caractères  
 -	Libelle commune : caractères  
--	N° section : Liste ?  
--	N° parcelle : Liste ?  
+-	N° section : caractères  
+-	N° parcelle : caractères 
   
 # SORTIE
 -	Fichier geopackage avec les couches suivantes :  

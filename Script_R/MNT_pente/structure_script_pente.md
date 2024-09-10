@@ -34,11 +34,11 @@ Structure du script pentes MNT
  o	Entrée : SpatRaster  
  o	Sortie : raster enregistré au nom du SpatRaster dans un gpkg 'pente.gpkg"     
 
- -save.sf.gpkg: 
+ -save.sf.gpkg: OK  
  o	Entrée : SpatVector  
  o	Sortie : vecteur enregistré au nom du SpatVector dans un gpkg 'pente.gpkg"  
 
--	save.gpkg :   
+-	save.gpkg : OK  
   o	Entrée : un SpatRaster et un sf  
  	o	Sortie : un géopackage comprenant les deux couches    
 

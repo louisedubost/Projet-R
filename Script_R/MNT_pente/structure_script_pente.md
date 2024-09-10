@@ -27,7 +27,7 @@ Structure du script pentes MNT
   o	Entrée : couche cadastre format vecteur  
  	o	Sortie : mnt format raster avec un buffer de 100m autour de la parcelle considérée  
  	
--	pente :  
+-	pente :  OK
   o	Entrée : mnt format raster  
  	o	Sortie : raster de pentes catégorisées  
 
@@ -36,9 +36,9 @@ Structure du script pentes MNT
  	o	Sortie : un géopackage comprenant toutes les couches   
 
 # FONCTIONS TEMPORAIRES EN DEHORS DU SCRIPT :
--	draw.vecteur (resp. draw.raster) :  
-  o	Entrée : couche format vecteur (resp. raster)  
- 	o	Sortie : plot dynamique de la couche  
+-	draw :  OK
+  o	Entrée : 1 couche format vecteur, 1 couche format raster
+ 	o	Sortie : plot dynamique des couches 
 --> Pas dans le script final !  
 
 

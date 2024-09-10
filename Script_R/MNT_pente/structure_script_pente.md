@@ -1,10 +1,10 @@
 Agnès Davière 10/09/2024
 Structure du script pentes MNT
 # ENTREE
--	Code postale   caractères
--	Libelle commune  caractères
--	N° section  Liste ?
--	N° parcelle  Liste ?
+-	Code postale  : caractères
+-	Libelle commune : caractères
+-	N° section : Liste ?
+-	N° parcelle : Liste ?
 -	
 # SORTIE
 -	Fichier geopackage avec les couches suivantes :
@@ -37,6 +37,6 @@ o	Sortie : un géopackage comprenant toutes les couches
 -	Draw.vecteur (resp. draw.raster) :
 o	Entrée : couche format vecteur (resp. raster)
 o	Sortie : plot dynamique de la couche
-	Pas dans le script final !
+--> Pas dans le script final !
 
 

@@ -15,7 +15,6 @@ tmap_mode("view")
 setwd("C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente")
 
 # Mes fonctions ----
-## créer une fonction qui enregistre mes couches en geopackage
 
 # ----
 # Récupération du MNT de la zone d'étude à partir de l'IGN
@@ -26,12 +25,10 @@ libelle <- "SAXEL"
 num_parc <- "2594"
 section <- "0A"
 
-# fun.code.insee<- function(code_post, libelle){
-#   info_com <- get_apicarto_codes_postaux(code_post)
-#   ligne <- which(info_com$libelleAcheminement == libelle)
-#   code_insee <- info_com$codeCommune[[ligne]]
-#   return(code_insee)
-# }
+info_com <- get_apicarto_codes_postaux(code_post)
+ligne <- which(info_com$libelleAcheminement == libelle)
+code_insee <- info_com$codeCommune[[ligne]]
+
 code_insee = "74261"
 zone_parca <- get_apicarto_cadastre(code_insee,
                                     type = "parcelle",
@@ -39,7 +36,7 @@ zone_parca <- get_apicarto_cadastre(code_insee,
                                     section = section, #section de parcelle, vérifié sur géoportail
                                     numero = num_parc,
                                     dTolerance = 0L,
-                                    source = "pci",
+                                    source = "pci"
 )
 
 tm_shape(zone_parca)+

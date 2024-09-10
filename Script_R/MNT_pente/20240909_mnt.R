@@ -12,7 +12,7 @@ library(sf)
 tmap_mode("view")
 
 # Set working directory ----
-setwd("C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente")
+setwd("C:/Users/Utilisateur/Documents/Projet-R-SIG/Script_R/MNT_pente")
 
 # Mes fonctions ----
 
@@ -43,7 +43,7 @@ tm_shape(zone_parca)+
   tm_polygons()
 
 ## Enregistrement du parcellaire en format .gpkg
-gpkg_path <- "C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente/projet5.gpkg"
+gpkg_path <- "C:/Users/Utilisateur/Documents/Projet-R-SIG/Script_R/MNT_pente/projet5.gpkg"
 st_write(zone_parca,
          gpkg_path,
          layer = "zone_parca",
@@ -60,7 +60,7 @@ mnt <- get_wms_raster(x = zone_parca,
                       layer = mnt_layer_name, 
                       res = 10,
                       rgb = FALSE,
-                      filename = "C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente//mnt.tif",  # automatiser le chemin d'accès
+                      filename = "C:/Users/Utilisateur/Documents/Projet-R-SIG/Script_R/MNT_pente/mnt.tif",  # automatiser le chemin d'accès
                       overwrite = TRUE
                       )
 # essayer d'ajouter le mnt au gpkg ainsi qu'un buffer de 100m autour de la parcelle
@@ -75,13 +75,12 @@ tm_shape(zone_parca)+
 pente <- terrain(mnt,
                  v = "slope",
                  unit = "degrees",
-                 filename = "D:/Module R/projet5/pente.tif",
+                 filename = "C:/Users/Utilisateur/Documents/Projet-R-SIG/Script_R/MNT_pente/pente.tif",
                  overwrite = TRUE
                  )
 
 classes <- c(0, 5, 15, 30, 45, 60, 90)
 classes_pente <- classify(pente, classes)
-plot(classes_pente)
 
 tm_shape(classes_pente)+
   tm_raster()+

@@ -17,6 +17,7 @@ libelle <- "SAXEL"
 section <- "0A"
 num_parc <- "2594"
 
+
 code.insee <- function(code_post, libelle){
   info_com <- get_apicarto_codes_postaux(code_post)
   ligne <- which(info_com$libelleAcheminement == libelle)
@@ -24,7 +25,7 @@ code.insee <- function(code_post, libelle){
   return(code_insee)
 }
 
-code_insee <- code.insee(code_post, libelle)
+#code_insee <- code.insee(code_post, libelle)
 
 get.cadastre <- function(code_insee, section, num_parc){
   zone_parca <- get_apicarto_cadastre(code_insee,
@@ -38,7 +39,7 @@ get.cadastre <- function(code_insee, section, num_parc){
   return(zone_parca)
 }
 
-zone_parca <- get.cadastre(code_insee, section, num_parc)
+#zone_parca <- get.cadastre(code_insee, section, num_parc)
 
 get.mnt <- function(zone_parca){
   mnt_layer_name <- "ELEVATION.ELEVATIONGRIDCOVERAGE"
@@ -53,7 +54,7 @@ get.mnt <- function(zone_parca){
   return(mnt)
 }
 
-mnt <- get.mnt(zone_parca)  # rajouter un buffer de 1000m autour des parcelles
+#mnt <- get.mnt(zone_parca)  # rajouter un buffer de 1000m autour des parcelles
 
 slope <- function(mnt){
   classes <- c(0, 5, 15, 30, 45, 60, 90)
@@ -67,7 +68,7 @@ slope <- function(mnt){
   return(pente_classee)
 }
 
-pente <- slope(mnt)
+#pente <- slope(mnt)
 
 save.raster.gpkg <- function(SpatRaster) {
   layer_name <- names(SpatRaster)
@@ -98,7 +99,7 @@ save.gpkg <- function(SpatRaster, sf){
   save.sf.gpkg(sf)
 }
 
-save.gpkg(pente, zone_parca) # attention, il tout mettre en 2154!
+#save.gpkg(pente, zone_parca) # attention, il tout mettre en 2154!
 
 # Fonctions temporaires ----
 draw <- function(raster,vecteur){
@@ -119,3 +120,5 @@ get.slope <- function(code_post, libelle, section, num_parc){
   pente <- slope(mnt)
   save.gpkg(pente, zone_parca)
 }
+
+get.slope(code_post, libelle, section, num_parc)

@@ -19,7 +19,7 @@ Structure du script pentes MNT
   o	Entrée : code postaux et libellés des communes (chaînes de caractères)
  	o	Sortie : code insee de la commune
 
--	get.cadastre :
+-	get.cadastre : OK
   o	Entrée : code insee + n° de section + n° de parcelle
  	o	Sortie : limites cadastrales de la parcelle concernée, format vecteur
 

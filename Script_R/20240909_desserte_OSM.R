@@ -54,6 +54,36 @@ get_osm_values <- function(osm_key) {
   return(values_df)
 }
 
+# Fonction simple pour récupérer les clés OSM contenant des données
+get_osm_keys_with_data <- function(zone_etude) {
+  # Convertir la zone d'étude en bbox
+  bbox <- st_bbox(zone_etude)
+  bbox_vector <- c(bbox["xmin"], bbox["ymin"], bbox["xmax"], bbox["ymax"])
+  
+  # Récupérer toutes les clés OSM disponibles
+  all_keys <- available_features()
+  
+  # Initialiser une liste pour stocker les clés avec des données
+  keys_with_data <- c()
+  
+  # Boucler à travers chaque clé pour vérifier si des données sont disponibles
+  for (osm_key in all_keys) {
+    opq_query <- opq(bbox = bbox_vector) %>%
+      add_osm_feature(key = osm_key)
+    
+    osm_data <- tryCatch({
+      osmdata_sf(opq_query)
+    }, error = function(e) NULL)
+    
+    # Ajouter la clé à la liste si elle contient des données
+    if (!is.null(osm_data) && (!is.null(osm_data$osm_points) || !is.null(osm_data$osm_lines) || !is.null(osm_data$osm_polygons))) {
+      keys_with_data <- c(keys_with_data, osm_key)
+    }
+  }
+  
+  return(keys_with_data)
+}
+
 # Fonction pour créer une carte avec les données OSM basées sur une zone d'étude
 create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
   # Convertir zone_etude en bbox
@@ -68,8 +98,12 @@ create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
   cway_zone <- osmdata_sf(opq_bbox)
   
   # Vérifier si les lignes OSM sont déjà au format sf
-  if (!inherits(cway_zone$osm_lines, "sf")) {
-    cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines) # rajouter une condition pour les NULL, fonction dim si dataframe
+  if (!is.null(cway_zone$osm_lines)) {
+    if (!inherits(cway_zone$osm_lines, "sf")) {
+      cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines)
+    }
+  } else {
+    message("Aucune donnée OSM pour les lignes n'a été trouvée.")
   }
   
   # Créer la carte
@@ -93,7 +127,7 @@ create_osm_map <- function(zone_etude, osm_key, osm_value = "*") {
 
 # Interroger une parcelle spécifique
 Nancy_parca_pci <- get_apicarto_cadastre(
-  x = "54395",               # Code INSEE en tant que chaîne
+  x = "52023",               # Code INSEE en tant que chaîne
   type = "parcelle",         # Type de données : parcelle
   code_com = NULL,           # Optionnel
   #section = "0A",            # Section (vérifie si "OA" est correct pour cette commune)   # Numéros de parcelle (en boucle si nécessaire)
@@ -115,13 +149,16 @@ osm_key <- "route"   # Par exemple "highway" pour les routes
 osm_value <- "foot"       # Par exemple "*" pour toutes les routes (ou un type spécifique comme "residential")
 create_osm_map(zone_etude, osm_key, osm_value)
 
+
+
 # réparation fonction ----
 
 explore_osm_keys()
-get_osm_values("forestry")
+get_osm_values("highway")
 
-osm_key <- "forestry"
-osm_value <- "yes"
+osm_key_inuatilisables <- "forestry"
+osm_key <- "highway"
+osm_value <- "cycleway"
 
 # Convertir zone_etude en bbox
 bbox <- st_bbox(zone_etude)
@@ -133,13 +170,17 @@ opq_bbox <- opq(bbox = bbox_vector) %>%
 
 # Exécuter la requête et obtenir les données
 cway_zone <- osmdata_sf(opq_bbox)
-class(opq_bbox)
-str(opq_bbox)
-names(opq_bbox)
 
 # Vérifier si les lignes OSM sont déjà au format sf
-if (!inherits(cway_zone$osm_lines, "sf")) {
-  cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines) # rajouter une condition pour les NULL, fonction dim si dataframe
+if (!is.null(cway_zone$osm_lines)) {
+  # Vérifier si cway_zone$osm_lines est déjà au format sf, sinon le convertir
+  if (!inherits(cway_zone$osm_lines, "sf")) {
+    cway_zone$osm_lines <- st_as_sf(cway_zone$osm_lines)
+  }
+} else {
+  # Si aucune donnée OSM n'est trouvée, créer une géométrie vide par défaut
+  cway_zone$osm_lines <- st_sf(geometry = st_sfc())  # Géométrie vide
+  message("Aucune donnée OSM pour les lignes n'a été trouvée. Une géométrie vide a été créée.")
 }
 
 # Créer la carte
@@ -150,3 +191,13 @@ map <- leaflet() %>%
 
 # Afficher la carte
 return(map)
+
+## ----
+# Fonction permettant de créer deux listes une avec des keys contenant des données et l'autres non
+
+# Charger les packages nécessaires
+
+# Exemple d'utilisation (remplacez par votre zone d'étude réelle)
+result <- get_osm_keys_with_data(zone_etude)
+print(result)
+

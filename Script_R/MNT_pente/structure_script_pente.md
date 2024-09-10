@@ -15,7 +15,7 @@ Structure du script pentes MNT
 
 # FONCTIONS INTERMEDIAIRES
 ## Etape 1 : travail sur une seule parcelle d’une seule commune. Ex : Parcelle 2594, section 0A à Salex. 
--	code_insee :
+-	code_insee : OK
   o	Entrée : code postaux et libellés des communes (chaînes de caractères)
  	o	Sortie : code insee de la commune
 

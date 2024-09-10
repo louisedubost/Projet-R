@@ -37,8 +37,8 @@ Structure du script pentes MNT
 
 # FONCTIONS TEMPORAIRES EN DEHORS DU SCRIPT :
 -	draw :  OK  
-  o	Entrée : 1 couche format vecteur, 1 couche format raster
- 	o	Sortie : plot dynamique des couches 
+  o	Entrée : 1 couche format vecteur, 1 couche format raster  
+ 	o	Sortie : plot dynamique des couches  
 --> Pas dans le script final !  
 
 

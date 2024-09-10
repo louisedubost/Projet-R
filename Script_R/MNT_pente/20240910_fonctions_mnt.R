@@ -4,14 +4,15 @@
 # Contact : agnes.daviere@agroparistech.fr
 # Dernière mise à jour : 10 septembre 2024
 
-# Libraries ----
+# Librairies ----
 librarian::shelf(happign,terra,tmap,sf)
 tmap_mode("view")
 
-# Set working directory ----
+# Dossier de travail ----
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Fonctions temporaires ----
+
 draw <- function(raster,vecteur){
   tm_shape(raster)+
     tm_raster()+

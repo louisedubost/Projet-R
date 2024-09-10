@@ -31,6 +31,14 @@ Structure du script pentes MNT
   o	Entrée : mnt format raster  
  	o	Sortie : raster de pentes catégorisées  
 
+-save.raster.gpkg: OK  
+ o	Entrée : SpatRaster  
+ o	Sortie : raster enregistré au nom du SpatRaster dans un gpkg 'pente.gpkg"     
+
+ -save.vector.gpkg: 
+ o	Entrée : SpatVector  
+ o	Sortie : vecteur enregistré au nom du SpatVector dans un gpkg 'pente.gpkg"  
+
 -	geopackage :  
   o	Entrée : liste de couches en format raster ou vecteur (possible de mélanger les 2 ?)  
  	o	Sortie : un géopackage comprenant toutes les couches   

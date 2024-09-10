@@ -1,13 +1,14 @@
 Agnès Davière 10/09/2024  
 Structure du script pentes MNT
 
-# ENTREE
+# FONCTION PRINCIPALE
+## Entrée  
 -	Code postale  : caractères  
 -	Libelle commune : caractères  
 -	N° section : caractères  
 -	N° parcelle : caractères 
   
-# SORTIE
+## Sortie  
 -	Fichier geopackage avec les couches suivantes :  
  	o	Cadastre non corrigé (vecteur)  
  	o	Pentes catégorisées (raster)  

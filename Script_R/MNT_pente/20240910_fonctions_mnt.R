@@ -54,7 +54,6 @@ get.mnt <- function(zone_parca){
 
 mnt <- get.mnt(zone_parca)  # rajouter un buffer de 100m autour des parcelles
 
-
 slope <- function(mnt){
   classes <- c(0, 5, 15, 30, 45, 60, 90)
   pente <- terrain(mnt,
@@ -69,3 +68,37 @@ slope <- function(mnt){
 
 pente <- slope(mnt)
 
+save.raster.gpkg <- function(SpatRaster) {
+  layer_name <- names(SpatRaster)
+  writeRaster(SpatRaster,
+              filename = "pente.gpkg",
+              filetype = "GPKG",
+              gdal = c("APPEND_SUBDATASET=YES",
+                       paste0("RASTER_TABLE=", layer_name))
+  )
+}
+
+save.raster.gpkg(pente)
+
+# save.vector.gpkg <- function(SpatVector) {
+#   layer_name <- names(SpatVector)
+#   st_write(SpatVector,
+#            gpkg_path,
+#            layer = "zone_parca",
+#            append = TRUE
+# 
+# }
+# 
+# gpkg_path <- "C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente/projet5.gpkg"
+# save.vector.gpkg(zone_parca)
+
+
+# Temporary functions ----
+draw <- function(raster,vecteur){
+  tm_shape(raster)+
+    tm_raster()+
+  tm_shape(vecteur)+
+    tm_borders("black", lwd = 2)
+}
+
+representation <- draw(pente, zone_parca)

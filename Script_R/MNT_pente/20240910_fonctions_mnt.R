@@ -11,7 +11,7 @@ tmap_mode("view")
 # Set working directory ----
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# Functions ----
+# Fonctions intermédiaires ----
 code_post = "74420"
 libelle <- "SAXEL"
 section <- "0A"
@@ -44,6 +44,7 @@ get.mnt <- function(zone_parca){
   mnt_layer_name <- "ELEVATION.ELEVATIONGRIDCOVERAGE"
   mnt <- get_wms_raster(x = zone_parca,
                         layer = mnt_layer_name, 
+                        crs = 2154,
                         res = 10,
                         rgb = FALSE,
                         filename = "mnt.tif",
@@ -52,16 +53,16 @@ get.mnt <- function(zone_parca){
   return(mnt)
 }
 
-mnt <- get.mnt(zone_parca)  # rajouter un buffer de 100m autour des parcelles
+mnt <- get.mnt(zone_parca)  # rajouter un buffer de 1000m autour des parcelles
 
 slope <- function(mnt){
   classes <- c(0, 5, 15, 30, 45, 60, 90)
   pente <- terrain(mnt,
                    v = "slope",
                    unit = "degrees",
-                   filename = "D:/Module R/projet5/pente.tif",
+                   filename = "pente.tif",
                    overwrite = TRUE
-                   )
+  )
   pente_classee <- classify(pente, classes)
   return(pente_classee)
 }
@@ -78,22 +79,28 @@ save.raster.gpkg <- function(SpatRaster) {
   )
 }
 
-save.raster.gpkg(pente)
+#save.raster.gpkg(pente)
 
-# save.vector.gpkg <- function(SpatVector) {
-#   layer_name <- names(SpatVector)
-#   st_write(SpatVector,
-#            gpkg_path,
-#            layer = "zone_parca",
-#            append = TRUE
-# 
-# }
-# 
-# gpkg_path <- "C:/Users/Utilisateur/Documents/Projet-R/Script_R/MNT_pente/projet5.gpkg"
-# save.vector.gpkg(zone_parca)
+save.sf.gpkg <- function(sf) {
+  gpkg_path <- paste0(dirname(rstudioapi::getActiveDocumentContext()$path),"/pente.gpkg")
+  layer_name <- deparse(substitute(sf))
+  st_write(sf,
+           gpkg_path,
+           layer = layer_name,
+           append = TRUE
+           )
+}
 
+#save.sf.gpkg(zone_parca)
 
-# Temporary functions ----
+save.gpkg <- function(SpatRaster, sf){
+  save.raster.gpkg(SpatRaster)
+  save.sf.gpkg(sf)
+}
+
+save.gpkg(pente, zone_parca) # attention, il tout mettre en 2154!
+
+# Fonctions temporaires ----
 draw <- function(raster,vecteur){
   tm_shape(raster)+
     tm_raster()+
@@ -102,3 +109,7 @@ draw <- function(raster,vecteur){
 }
 
 representation <- draw(pente, zone_parca)
+
+# Fonction finale ----
+
+

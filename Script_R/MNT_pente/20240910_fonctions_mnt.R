@@ -36,14 +36,14 @@ get.cadastre <- function(code_insee, section, num_parc){
                                       section = section,
                                       numero = num_parc,
                                       dTolerance = 0L,
-                                      source = "pci"
+                                      source = "PCI"
                                       )
   return(zone_parca)
 }
 
 get.mnt <- function(zone_parca){
   mnt_layer_name <- "ELEVATION.ELEVATIONGRIDCOVERAGE"
-  zone_parca_buffered <- st_buffer(zone_parca, dist = 1000)
+  zone_parca_buffered <- st_buffer(zone_parca, dist = 100)
   mnt <- get_wms_raster(x = zone_parca_buffered,
                         layer = mnt_layer_name, 
                         crs = 2154,
@@ -107,7 +107,7 @@ get.slope <- function(code_post, libelle, section, num_parc){
 
 code_post = "74420"
 libelle <- "SAXEL"
-section <- "0A"
-num_parc <- "2594"
+section <- list(NULL)
+num_parc <- list(NULL)
 
 get.slope(code_post, libelle, section, num_parc)

@@ -3,10 +3,10 @@ title: "Desserte forestière"
 author: "Killian BAUE, Agnès DAVIERE, Louise DUBOST, Elda PERONNET"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
+  html_document:
     toc: true 
     toc_depth: 3
-  html_document:
+  pdf_document:
     toc: true 
     toc_depth: 3
 ---
@@ -14,6 +14,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+![](images/APT_Logo_RVB_Positif.png)
 
 # Presentation du projet
 
@@ -29,5 +31,6 @@ cartes à fond!
 ## Carte de Kiks (parcellaire + desserte à 1km + type de routes)
 ## Cartes buffer desserte
 ## Carte catégorie pentes (R et QGis)
+## Espoir d'une carte de croisement pentes et desserte
 
 # Conclusion et discussion / Limites et perspective

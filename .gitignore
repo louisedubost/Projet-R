@@ -60,3 +60,6 @@ rsconnect/
 
 # Prevent import of .tif files
 *.tif
+
+# Prevent import of .gpkg files
+*.gpkg

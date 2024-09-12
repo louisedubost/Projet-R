@@ -1,0 +1,30 @@
+---
+title: "discussions_desserte"
+author: "Killian"
+date: "2024-09-12"
+output: html_document
+
+
+## Perspective desserte
+
+L'étape d'acquisition et de caractérisation de la desserte comporte de nombreuses limites et les procédées de traitement de données impliquent de nombreuses hypothèses simplificatrices.
+
+Dans un premier temps, des erreurs ont pu être rencontrées lors de l'import des données IGN. En effet, une première zone délimitée seulement à une dizaine de parcelles de la zone d'étude a fait l'objet de l'import de desserte selon la méthode décrite dans les parties précédentes. Certaines interruptions de routes (tronçons isolés) ont pu être détectées.
+
+Ces erreurs impliquent des corrections manuelles sur Qgis. Or, lors de l'import de la desserte à une plus large échelle (Saxel plus le buffer de 1 km), les erreurs locales de tronçons isolés avaient disparu.
+
+Dans un souci d'universalité du code, notamment en cas de réflexion à des échelles plus fines que celles du massif ou de la commune, il aurait fallu inclure une fonction détectant les tronçons isolés et indiquant à l'opérateur de corriger manuellement les erreurs sur Qgis. Il aurait également fallait prévoir par la suite un input de type shape (couche desserte corrigée).
+
+
+Un des axes majeurs d'amélioration réside dans la création d'un indicateur attestant de la distance de traîne sur piste jusqu'à une place de dépôt.
+
+Pour cela, deux méthodes sont utilisables : 
+
+- La méthode la plus simple (et source de plus d'approximations) consiste en la mise en place de buffers de distance à partir des places de dépôt. Ces classes de distances peuvent notamment être celles tirées du document de l'IGN cité dans les parties précédentes. Ces buffers pourraient être utilisés pour estimer la distance de traine au niveau de chaque pistes exploitables. Cette distance pourrait ensuite converti en durée afin d'obtenir des isochrones. Une amélioration supplémentaire serait d'inclure le facteur coût.
+
+
+L’objectif serait par la suite de combiner ces buffers (dont l'origine est une place de dépôt) avec le facteur d'exploitabilité à l'échelle de la piste (buffers de distances de débusquage suivant les pistes croisés aux pentes environnantes). Cette opération permettrait une analyse plus précise des contraintes et des capacités opérationnelles des routes et pistes pour les opérations de débardage.
+
+Une autre piste d'amélioration réside dans l'acquisition de données relatives à des infrastructures routières (comme les localisations exactes des places de dépôts et de retournement). Le facteur "sens de circulation" aurait également pu être ajouté (notamment pour les routes à une chaussée et les routes empierrées ne possédant pas de place de retournement).
+
+Une piste d'amélioration supplémentaire aurait été d'indiquer en sortie de la fonction principale modes d'exploitation possibles compte tenu des différentes contraintes topographiques et liées aux infrastructures routières.

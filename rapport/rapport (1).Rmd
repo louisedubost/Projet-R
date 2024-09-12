@@ -3,13 +3,15 @@ title: "Discrimination des surfaces par distance de débardage et par analyse de
 author: "Killian BAUE, Agnès DAVIERE, Louise DUBOST, Elda PERONNET"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    toc: true 
-    toc_depth: 3
   pdf_document:
     toc: true 
     toc_depth: 3
+  html_document:
+    toc: true 
+    toc_depth: 3
 bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -19,10 +21,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE, fig.align='center', out.width='100%'}
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-knitr::include_graphics("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/agroparistech.png")
 ```
 
-# Presentation du projet
+# Présentation du projet
 
 Identifier les zones les plus accessibles et les plus adaptées aux 
 opérations de débardage est essentiel pour les gestionnaires forestiers.
@@ -34,7 +35,7 @@ MNT sont récupérés à partir du package `happign` [@happign] de R. Le
 traitement a ensuite été réalisé en parallèle avec Rstudio et QGis afin de 
 mener une étude comparative. 
 
-Ce projet à abouti à la création d'une carte d'exploitabilité couplant le relief et les distances de débardage par rapport aux pistes. Nous avons atteint les objectifs du projet en fournissant un outil permettant d'optimiser l'exploitation forestière et faciliter la prise de décision.
+Ce projet a abouti à la création d'une carte d'exploitabilité couplant le relief et les distances de débardage par rapport aux pistes. Nous avons atteint les objectifs du projet en fournissant un outil permettant d'optimiser l'exploitation forestière et faciliter la prise de décision.
 
 # Méthode
 ## Choix de la zone d'étude
@@ -44,16 +45,16 @@ La zone d'étude a été choisie de manière à respecter plusieurs critères :
 - comporter des zones forestières 
 - présenter une topographie avec du relief
 - posséder un réseau de desserte d'une taille suffisante avec différentes natures de routes 
-- converte par la technologie Lidar. Un axe d'étude étant la comparaison de différentes sources de MNT, il est judicieux de choisir une zone d'étude ayant déjà fait l'objet d'une campagne Lidar et dont les données retraitées sont disponibles.
-- Supperficie raisonnable pour optimiser les temps de calcul 
+- couverte par la technologie Lidar. Un axe d'étude étant la comparaison de différentes sources de MNT, il est judicieux de choisir une zone d'étude ayant déjà fait l'objet d'une campagne Lidar et dont les données retraitées sont disponibles.
+- une superficie raisonnable pour optimiser les temps de calcul 
 
-La commune d'étude à été choisie suite à des validations des critères précédents est la commune de Saxel en Haute-Savoie. Saxel est une commune de 500 habitants recouverte à plus de 60 % par des zones forestières. lien wikipedia : https://fr.wikipedia.org/wiki/Saxel
+La commune d'étude a été choisie suite à des validations des critères précédents est la commune de Saxel en Haute-Savoie. Saxel est une commune de 500 habitants recouverte à plus de 60 % par des zones forestières. Lien wikipedia : https://fr.wikipedia.org/wiki/Saxel
 
 L'obtention du cadastre de la commune se fait via la fonction `get_apicarto_cadastre()` du package `happign`.
 
 Ci-dessous, la fonction permettant l'import des données cadastrales : 
 
-```{r}
+```{r, eval=FALSE}
 
 importer.cadastre <- function(insee_code) {
   # importation des parcelles cadastrales avec le code insee
@@ -66,8 +67,7 @@ importer.cadastre <- function(insee_code) {
 
 ```
 
-Les données cadastrales sont re-projetées en système de coordonnées Lambert 93 (EPSG:2154). Cette re-projection permets que toutes les données géographiques soient alignées dans le même système de référence.
-
+Les données cadastrales sont re-projetées en système de coordonnées Lambert 93 (EPSG:2154). Cette reprojection permet que toutes les données géographiques soient alignées dans le même système de référence.
 
 ## Recherche et caractérisation de la desserte
 
@@ -79,7 +79,7 @@ Pour utiliser les données d'OSM (OpenStreetMap), le package `OSM_data`a été u
 
 Deux fonctions ont été utilisées pour explorer et récupérer les données OpenStreetMap. La première fonction, `explore.osm.keys`, récupère toutes les clés OSM disponibles, les stocke dans un data frame et les affiche dans une fenêtre interactive avec la fonction View(). Cela permet une inspection manuelle des clés. 
 
-```{r}
+```{r, eval=FALSE}
 # Définir la fonction pour afficher les clés OSM dans une fenêtre interactive
 explore.osm_keys <- function() {
   
@@ -106,7 +106,7 @@ explore.osm_keys <- function() {
 
 La seconde fonction, `get.osm.values`, vérifie si une clé OSM spécifique existe, puis récupère les valeurs associées à partir d'une clé OSM définie en entrée de fonction. Si des données existent, elles sont organisées dans un data frame et affichées pour une analyse plus approfondie.
 
-```{r}
+```{r, eval=FALSE}
 # Définir la fonction qui récupère les valeurs OSM possibles pour une clé spécifique
 get.osm.values <- function(osm_key) {
   
@@ -149,7 +149,7 @@ Enfin, la fonction `create.osm.map` génère une carte basée sur des données O
 
 Dans la fonction, la zone d'étude (`zone_etude`) est convertie en une "bounding box" (bbox), qui définit les limites géographiques de la requête. Ensuite, une requête OSM est construite pour extraire les données correspondant à une clé (`osm_key`) et une valeur (`osm_value`). Si des lignes OSM sont retournées, elles sont converties au format spatial (`sf`) et ajouté à une carte interactive `leaflet`, avec des polylignes colorées. Enfin, la carte est centrée sur la zone d'étude et retournée pour affichage.
 
-```{r}
+```{r, eval=FALSE}
 # Fonction pour créer une carte avec les données OSM basées sur une zone d'étude
 create.osm.map <- function(zone_etude,
                            osm_key,
@@ -197,12 +197,10 @@ create.osm.map <- function(zone_etude,
 
 ### Données issues de l'IGN
 
-Pour obtenir la desserte avec les données de l'IGN, nous utilisons la fonction `importer.routes()` permettant de récupérer les tronçons de route dans une zone tampon spécifié en utilisant une requête WFS (Web Feature Service). La zone tampon est définie par l'utilisateur, et seuls les tronçons de route interceptant cette zone sont importés, en se basant sur la couche de données "BDTOPO_V3
-". Pour s'assurer que toutes les routes, y compris les pistes, de la zone d'étude sont connectées aux routes accessibles aux grumiers, un buffer de 1 km est créé autour des routes importée.
+Pour obtenir la desserte avec les données de l'IGN, nous utilisons la fonction `importer.routes()` permettant de récupérer les tronçons de route dans une zone tampon spécifiée en utilisant une requête WFS (Web Feature Service). La zone tampon est définie par l'utilisateur, et seuls les tronçons de route interceptant cette zone sont importés, en se basant sur la couche de données "BDTOPO_V3
+". Pour s'assurer que toutes les routes, y compris les pistes, de la zone d'étude sont connectées aux routes accessibles aux grumiers, un buffer de 1 km est créé autour des routes importées.
 
-```{r}
-
-
+```{r, eval=FALSE}
 ## Fonction pour importer les routes ----
 importer.routes <- function(zone_tampon) {
   # importation des troncons de route dans une zone tampon
@@ -215,9 +213,9 @@ importer.routes <- function(zone_tampon) {
 ```
 
 
-La fonction `reprojeter.donnees()` est utilisée pour re-projeter des données spatiales dans un système de coordonnées spécifique, ici le système Lambert 93. En prenant en entrée les données spatiales et le code du système de coordonnées (CRS), cette fonction applique la transformation nécessaire via la fonction `st_transform()`, garantissant ainsi que les données sont alignées avec le système de coordonnées Lambert 93 utilisé pour l'analyse.
+La fonction `reprojeter.donnees()` est utilisée pour reprojeter des données spatiales dans un système de coordonnées spécifique, ici le système Lambert 93. En prenant en entrée les données spatiales et le code du système de coordonnées (CRS), cette fonction applique la transformation nécessaire via la fonction `st_transform()`, garantissant ainsi que les données sont alignées avec le système de coordonnées Lambert 93 utilisé pour l'analyse.
 
-```{r}
+```{r, eval=FALSE}
 
 ## Fonction pour re-projeter les donnees spatiales ----
 reprojeter.donnees <- function(donnees,
@@ -239,7 +237,7 @@ Par la suite, nous définissons que :
 - Les sentiers ne sont pas comptabilisés dans l'analyse bien que ces derniers peuvent être empruntés par les bûcherons en cas d'abatage manuel (ce qui très probablement le cas dans un contexte alpin). 
 
 
-```{r}
+```{r, eval=FALSE}
 ## Fonction pour filtrer les routes par type ----
 filtrer.routes <- function(routes) {
   # Creation des sous-ensembles de routes selon leur nature
@@ -274,9 +272,9 @@ L'étape suivante est de pouvoir classifier les différentes routes comme étant
 
 - Identification des connexions indirectes : pour les pistes non connectées directement, un processus itératif est utilisé pour vérifier si elles peuvent être connectées indirectement. Un nouveau buffer de 5 mètres est créé autour des pistes déjà identifiées comme exploitables, et les pistes non connectées sont testées à nouveau pour voir si elles se trouvent dans ce buffer. Ce processus se répète jusqu'à ce qu'aucune nouvelle piste exploitée ne soit trouvée ;
 
-- Intersection et extraction des points : une fois toutes les pistes exploitables identifiées, la fonction calcule l'intersection entre ces pistes et les routes accessibles aux grumiers pour déterminer les points de connexion. Si ces intersections ne sont pas des points individuels, elles sont extraites comme tels à l’aide de `st_collection_extract()`.
+- Intersection et extraction des points : une fois toutes les pistes exploitables identifiées, la fonction calcule l'intersection entre ces pistes et les routes accessibles aux grumiers pour déterminer les points de connexion. Si ces intersections ne sont pas des points individuels, elles sont extraites à l’aide de `st_collection_extract()`.
 
-```{r}
+```{r, eval=FALSE}
 ## Fonction pour verification de l'exploitabilite des pistes ----
 verifier.exploitabilite <- function(routes_skidders,
                                     routes_grumiers,
@@ -326,7 +324,7 @@ Les résultats obtenus sont sauvegardés dans un fichier GeoPackage. Une fonctio
 - Les pistes non-exploitables ;
 - Les places de dépôt.
 
-```{r}
+```{r, eval=FALSE}
 
 ## Fonction pour sauvegarder une couche dans un fichier geopackage ----
 sauvegarder.couche <- function(donnees, chemin_fichier, nom_couche) {
@@ -355,7 +353,7 @@ La construction de ces buffers a été réalisée à l'aide de la fonction `zone
 
 Enfin, en sortie, la fonction retourne l'objet fusionné contenant les zones tampons autour des chemins de desserte.
 
-```{r}
+```{r, eval=FALSE}
 # Création de zones de buffers autour de la desserte
 zone.buffer <- function(
     shape_routes, 
@@ -412,7 +410,7 @@ Dans un second temps, une fonction permettant de convertir le dataframe contenan
 
 - Enfin, la fonction retourne le raster créé, prêt à être utilisé pour des analyses spatiales ou des visualisations. Le raster de sortie peut-être ensuite exporté en geopackage et utiliser sur d'autres logiciels.
 
-```{r}
+```{r, eval=FALSE}
 # Créer une fonction pour générer un raster à partir d'un buffer avec nrows et ncols en entrée
 raster.buffer <- function(
     buffer, 
@@ -462,6 +460,37 @@ La pente a également été calculée à partir de QGis, avec l'outil calcul de 
 
 ## Création de la carte d'exploitabilité
 
+Grâce au code R, on a plusieurs couches d’entrée à traiter sur Qgis : La couche du cadastre, la couche des buffers avec les distances aux routes, la couche des pentes, et la couche de la desserte.
+
+Dans un premier temps, on crée une carte du réseau de desserte, une carte des pentes et une carte des distances au sein de la commune. Pour cela, on découpe les couches raster selon une couche de masque, le cadastre. La symbologie est ensuite ajustée pour créer différentes classes pour les cartes des pentes et des distances.
+
+L’objectif par la suite est de réussir à croiser les données de pente et de distance pour définir une exploitabilité potentielle sur le secteur. Pour cela, un tableau permettant de lier ces deux paramètres est créé, sur la base de celui récupéré sur le site de l’IGN. Il associe une couleur en fonction de la facilité d'exploitation selon le croisement entre la pente et la distance.
+
+
+Suite à cela, les couches de pentes et de distances sont reclassifiées, afin d’attribuer un numéro aux classes existantes. Par exemple, la couche « pente » est reclassifiées selon le tableau suivant : 
+
+| De  | À    | Nouvelle valeur |
+|-----|------|-----------------|
+| 0   | 100  | 1               |
+| 100 | 200  | 2               |
+| 200 | 500  | 3               |
+
+  
+  On a alors 2 nouvelles couches définies selon les nouvelles classes crées. On associe ensuite un numéro aux couleurs choisies dans le tableau, de façon à ce que Vert = 1, Jaune = 2, Orange = 3 et Rouge = 4. 
+On doit ensuite créer une nouvelle couche avec l’outil « calculatrice raster » qui associe à chaque pixel la valeur 1,2,3,4 de la couleur correspondante au croisement dans lequel il se trouve. Etant donné que les conditions sont trop lourdes, on doit diviser cela en plusieurs couches, on a ainsi :
+  -	Couche 1 : if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 2, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 3, 2,0)))
+  -	Couche 2 : if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 2, 2, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 3, 3,0)))
+  -	Couche 3 : if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 1, 2, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 2, 3, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 3, 4,0)))
+  -	Couche 4 : if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 1, 3, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 2, 4, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 3, 4,0)))
+  -	Couche 5 : if("couche_reclassifiee_pente@1" >= 5, 4, 0)
+            On veut maintenant combiner ces couches ensembles. Pour cela, il faut une couche qui, entre toutes les couches, sélectionne le numéro le plus élevé et attribue cette valeur au pixel concerné. Elle est créé avec « calculatrice raster ». La fonction « MAX » ne fonctionnant pas, la méthode suivante a été utilisée dans la calculatrice : 
+  « "couche5_exploit@1" * ("couche5_exploit@1" >= 1) +
+  "couche4_exploit@1" * ("couche5_exploit@1" < 1 and "couche4_exploit@1" >= 1) +
+  "couche3_exploit@1" * ("couche5_exploit@1" < 1 and "couche4_exploit@1" < 1 and "couche3_exploit@1" >= 1) +
+  "couche2_exploit@1" * ("couche5_exploit@1" < 1 and "couche4_exploit@1" < 1 and "couche3_exploit@1" < 1 and "couche2_exploit@1" >= 1) +
+  "couche1_exploit@1" * ("couche5_exploit@1" < 1 and "couche4_exploit@1" < 1 and "couche3_exploit@1" < 1 and "couche2_exploit@1" < 1 and "couche1_exploit@1" >= 1) »
+
+La couche finale est ensuite créée, associant donc des valeurs de 1 à 4 pour chacun des pixels. Ces chiffres correspondent aux couleurs du tableau, et représentent l’exploitabilité. 
 
 
 # Résultats
@@ -500,7 +529,13 @@ De plus, la résolution spatiale utilisée dans l'exemple de ce rapport est de 2
 
 # Optimisation de la carte d'exploitabilité 
 
-PARTIE ELDA 
+Les cartes d'exploitabilité pourraient être améliorées ; la méthode suivante fonctionne car il n'y a que 4 valeurs d'exploitabilité possible, mais s'il y avait eu plus de nuances, cette méthode aurait certainement été trop lourde. 
+
+De plus, il faudrait préciser concrètement ce que signifient ces codes couleurs, quelles sont les méthodes d'exploitation derrière, ect.
+
+Les coûts pourraient également être pris en compte, car il existe des parcelles ou l'exploitation est possible mais plus onéreuse. Il serait intéréssant d'intégrer cela.
+
+Enfin, il faudrait trouver une méthode pour automatiser ce processus dans R, sans avoir à passer par Qgis. Dans l'idéal, tout pourrait être automatisé, dans la mesure ou on aurait juste a entrer des informations sur la parcelles, puis le script récupèrerait les pentes, les distances, et les croiseraient ensembles pour générer une carte d'exploitabilité. 
 
 Bien que le temps ait été limité, la méthodologie pour créer une carte d'exploitabilité sur le logiciel R était claire. Étant donné que les données des buffers et des pentes sont sous forme de rasters, avec une résolution de 25 mètres et un système de coordonnées identique, l'analyse croisée de ces rasters est théoriquement faisable. L'objectif était de développer une fonction capable de générer un raster vide aux mêmes dimensions que celui des buffers. Ensuite, pour chaque cellule, une analyse conditionnelle devait être effectuée : par exemple, si le pixel se trouve dans un buffer de 100 mètres et présente une pente inférieure à 30%, la valeur "exploitabilité facile" serait assignée à ce pixel dans le nouveau raster.
 

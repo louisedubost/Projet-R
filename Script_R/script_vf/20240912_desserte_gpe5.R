@@ -389,7 +389,6 @@ section <- list(NULL)
 num_parc <- list(NULL)
 
 get.desserte(code_post, libelle, section, num_parc)
-get.slope(code_post, libelle, section, num_parc)
 
 
 

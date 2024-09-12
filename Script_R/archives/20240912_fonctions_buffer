@@ -163,5 +163,3 @@ carte_desserte <- visualiser.raster.desserte(
 
 # Exporter la carte en PDF
 ggsave("carte_buffer.pdf", plot = carte_desserte, width = 10, height = 10)
-
-

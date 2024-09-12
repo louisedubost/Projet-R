@@ -1,0 +1,182 @@
+### ---- Chargement des library ----
+library(readxl)
+library(happign)
+library(tmap)
+library(sf)
+library(dplyr)  
+tmap_mode("view")
+library(terra)
+library(raster)
+library(ggplot2)
+library(stars)
+
+### ---- Fonctions ----
+save.sf.gpkg <- function(buffer_merged_vec) {
+  gpkg_path <- file.path("Résultats/buffer_desserte_vec.gpkg")
+  st_write(buffer_merged_vec,
+           gpkg_path,
+           append = TRUE)
+}
+
+
+### ---- Importation des données cadastrales de la zone d'étude ----
+
+# Créer un vecteur de nombres de 300 à 400
+nombres <- 1500:1600
+
+# Convertir les nombres en chaînes de caractères avec formatage à 4 chiffres
+vecteur_chaine <- sprintf("%04d", nombres)
+
+# Interroger une parcelle spécifique
+Saxel_parca_pci <- get_apicarto_cadastre(
+  x = "74261",               # Code INSEE en tant que chaîne
+  type = "parcelle",         # Type de données : parcelle
+  section = "0A",            # Section (vérifie si "OA" est correct pour cette commune)
+  numero = vecteur_chaine,   # Numéros de parcelle (en boucle si nécessaire)
+  source = "PCI",            # Source des données
+)
+
+# Visualiser les résultats
+qtm(Saxel_parca_pci)
+Saxel_parca_pci_2154 <- st_transform(Saxel_parca_pci,
+                                      2154)
+st_write(Saxel_parca_pci_2154,
+         "testRprojet.gpkg",
+         layer = "Saxel_parca_pci_2154",
+         append = TRUE)
+
+st_layers("Saxel_parca_pci_2154")
+
+### ---- Creation des zones buffers en format vectoriel ----
+base_path <- "C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Projet-R"
+shape_route_path <- file.path("Donnees/Couche_desserte.gpkg")
+
+# Lire le shapefile des routes
+shape_routes <- st_read(shape_route_path)
+
+# Vérifier si les géométries sont valides, sinon les corriger
+shape_routes <- st_make_valid(shape_routes)
+
+buffer_20m_vec <- st_buffer(shape_routes, dist = 20)  # Zone de 0 à 20 m
+buffer_50m_vec <- st_buffer(shape_routes, dist = 50)  # Zone de 0 à 50 m
+buffer_100m_vec <- st_buffer(shape_routes, dist = 100)  # Zone de 0 à 100 m
+
+# Ajouter une colonne "distance" pour identifier chaque zone
+buffer_20m_vec$distance <- "20"
+buffer_50m_vec$distance <- "50"
+buffer_100m_vec$distance <- "100"
+
+# Fusionner les buffers
+buffer_merged_vec <- rbind(buffer_20m_vec, buffer_50m_vec, buffer_100m_vec)
+
+# Créer une carte avec tmap
+tm_shape(buffer_merged_vec) +
+  tm_polygons(col = "orange", alpha = 0.6, title = "100m") +
+  tm_shape(buffer_50m_vec) +
+  tm_polygons(col = "yellow", alpha = 0.6, title = "50m") +
+  tm_shape(buffer_20m_vec) +
+  tm_polygons(col = "green", alpha = 0.6, title = "20m") +
+  tm_shape(shape_routes) +
+  tm_lines(col = "black", lwd = 2) +
+  tm_layout(title = "Carte des Buffers autour des Routes")
+
+save.sf.gpkg(buffer_merged_vec)
+
+
+
+### ---- Creation des zones buffers en format raster ----
+
+# Créer des buffers pour les différentes zones
+buffer_20m <- st_buffer(shape_routes, dist = 20)
+buffer_21m <- st_buffer(shape_routes, dist = 21) 
+buffer_50m <- st_buffer(shape_routes, dist = 50)
+buffer_51m <- st_buffer(shape_routes, dist = 51) 
+buffer_100m <- st_buffer(shape_routes, dist = 100)
+
+# Créer les zones spécifiques
+zone_0_20m <- buffer_20m  # Zone de 0 à 20 m
+zone_20_50m <- st_difference(buffer_50m, buffer_21m)  # Zone de 20 à 50 m
+zone_50_100m <- st_difference(buffer_100m, buffer_51m)  # Zone de 50 à 100 m
+
+# Affichage des résultats
+plot(st_geometry(zone_0_20m), col = 'red', add = TRUE)
+plot(st_geometry(zone_20_50m), col = 'blue', add = TRUE)
+plot(st_geometry(zone_50_100m), col = 'green', add = TRUE)
+
+# Ajouter une colonne "distance" pour identifier chaque zone
+buffer_20m$distance <- "20"
+buffer_50m$distance <- "50"
+buffer_100m$distance <- "100"
+
+# Supprimer les colones non necessaires
+buffer_50m_bis <- buffer_50m[,-c(4:6)]
+buffer_100m_bis <- buffer_100m[,-c(4:6)]
+
+### ---- ratseriser avant de fusionner ----
+
+# Créer un raster pour buffer 20m
+extent_shape_20m <- ext(st_bbox(buffer_20m))
+resolution <- 5e-5
+r_20m <- rast(nrows = 300, ncols = 300, res = resolution, crs = "EPSG:2154", extent = extent_shape_20m)
+
+buffer_raster_20m <- terra::rasterize(x = buffer_20m, y = r_20m, field = 'distance', fun = min)
+plot(buffer_raster_20m)
+
+# Créer un raster pour buffer 50m
+extent_shape_50m <- ext(st_bbox(buffer_50m_bis))
+resolution <- 5e-5
+r_50m <- rast(nrows = 300, ncols = 300, res = resolution, crs = "EPSG:2154", extent = extent_shape_50m)
+
+buffer_raster_50m <- terra::rasterize(x = buffer_50m_bis, y = r_50m, field = 'distance', fun = min)
+plot(buffer_raster_50m)
+buffer_raster_50m
+
+# Créer un raster pour buffer 100m
+extent_shape_100m <- ext(st_bbox(buffer_100m_bis))
+resolution <- 5e-5
+r_100m <- rast(nrows = 300, ncols = 300, res = resolution, crs = "EPSG:2154", extent = extent_shape_100m)
+
+buffer_raster_100m <- terra::rasterize(x = buffer_100m_bis, y = r_100m, field = 'distance', fun = min)
+plot(buffer_raster_100m)
+
+# Fusionner les rasters après les avoir rééchantillonnés
+buffer_raster_combine <- merge(buffer_raster_20m, buffer_raster_100m, buffer_raster_50m)
+
+# Afficher les valeurs uniques du raster fusionné
+unique(buffer_raster_combine)
+
+# Afficher le raster fusionné
+plot(buffer_raster_combine)
+
+
+### ----
+
+# Fusionner les buffers
+buffer_merged <- rbind(buffer_20m, buffer_50m_bis, buffer_100m_bis)
+
+# Créer un raster avec l'étendue des buffers
+extent_shape <- ext(st_bbox(buffer_merged))
+resolution <- 5e-5  # Taille des pixels en mètres
+nrows <- 300
+ncols <- 300
+r <- rast(nrows = nrows, ncols = ncols, crs = "EPSG:2154", extent = extent_shape)
+
+# Rasteriser le vecteur
+buffer_raster <- terra::rasterize(x = buffer_merged, y = r, field = 'distance', fun = max)
+unique(buffer_raster)
+
+breaks <- c(-Inf, 20, 50, 100, Inf)
+colors <- c("green", "yellow", "orange", "red")
+
+# Visualiser le raster avec les breaks et couleurs définis
+plot(buffer_raster, 
+     main = "Raster des Buffers", 
+     col = colors, 
+     breaks = breaks, 
+     legend = TRUE, 
+     axes = TRUE, 
+     box = TRUE)
+
+unique(buffer_raster)
+buffer_raster
+

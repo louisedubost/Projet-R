@@ -18,37 +18,8 @@ save.sf.gpkg <- function(buffer_merged_vec) {
            append = TRUE)
 }
 
-
-### ---- Importation des données cadastrales de la zone d'étude ----
-
-# Créer un vecteur de nombres de 300 à 400
-nombres <- 1500:1600
-
-# Convertir les nombres en chaînes de caractères avec formatage à 4 chiffres
-vecteur_chaine <- sprintf("%04d", nombres)
-
-# Interroger une parcelle spécifique
-Saxel_parca_pci <- get_apicarto_cadastre(
-  x = "74261",               # Code INSEE en tant que chaîne
-  type = "parcelle",         # Type de données : parcelle
-  section = "0A",            # Section (vérifie si "OA" est correct pour cette commune)
-  numero = vecteur_chaine,   # Numéros de parcelle (en boucle si nécessaire)
-  source = "PCI",            # Source des données
-)
-
-# Visualiser les résultats
-qtm(Saxel_parca_pci)
-Saxel_parca_pci_2154 <- st_transform(Saxel_parca_pci,
-                                      2154)
-st_write(Saxel_parca_pci_2154,
-         "testRprojet.gpkg",
-         layer = "Saxel_parca_pci_2154",
-         append = TRUE)
-
-st_layers("Saxel_parca_pci_2154")
-
 ### ---- Creation des zones buffers en format vectoriel ----
-base_path <- "C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Projet-R"
+base_path <- "C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Projet-R" # la couche desserte est aussi dans le dossier "Donnees" du github
 shape_route_path <- file.path("Donnees/Couche_desserte.gpkg")
 
 # Lire le shapefile des routes

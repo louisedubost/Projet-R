@@ -38,7 +38,8 @@ Attention! Mettre à jour la référence IGN!
 Petite phrase pour dire si oui ou non on y est parvenu ( :
 
 # Méthode
-## Recherche de la desserte
+## Choix de la zone d'étude
+## Recherche et caractérisation de la desserte
 ## Création de buffer autour de la desserte
 ## Calcul de la pente
 

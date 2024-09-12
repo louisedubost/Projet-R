@@ -122,7 +122,7 @@ save.raster.gpkg <- function(spat_raster) {
 # Exemple ---- 
 
 # Définir le chemin du fichier GeoPackage
-geopackage_file <- "C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Projet-R/Résultats/projet_R_exploitabilitév1.gpkg"
+geopackage_file <- paste0(dirname(dirname(rstudioapi::getActiveDocumentContext()$path)),"./Résultats/projet_R_exploitabilitév1.gpkg")
 shape_route_path <- sf::st_read(geopackage_file, layer = "chemins_exploitables")
 shape_route_path$type <-"chemins_exploitables"
 shape_route_path_2 <- sf::st_read(geopackage_file, layer = "routes_grumiers")
@@ -138,6 +138,7 @@ buffer_desserte_vect <- zone.buffer(
   100, 
   200, 
   500)
+
 class(buffer_desserte_vect)
 # Enregistrer le fichier vecteur en GeoPackage
 save.sf.gpkg(
@@ -159,5 +160,8 @@ save.raster.gpkg(
 carte_desserte <- visualiser.raster.desserte(
   buffer_desserte_rast, 
   merged_shape)
+
+# Exporter la carte en PDF
+ggsave("carte_buffer.pdf", plot = carte_desserte, width = 10, height = 10)
 
 

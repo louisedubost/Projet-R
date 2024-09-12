@@ -19,7 +19,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Presentation du projet
 
-Identifier les zones les plus accessibles et les plus adaptées aux opérations de débardage est essentiel pour les gestionnaires forestiers Ce projet a pour objectif d’automatiser la détermination de catégorie de surface selon la distance de débardage et la pente sur une zone connue. La distance de débardage par rapport à la desserte est classée selon 3 catégories : 20 – 50 – 100m (SOURCE IGN d’ELDA). La couche de desserte et le MNT sont récupérés à partir du package happign de R (bibliographie). Le traitement a ensuite été réalisé en parallèle avec Rstudio et QGis afin de mener une étude comparative. 
+Identifier les zones les plus accessibles et les plus adaptées aux 
+opérations de débardage est essentiel pour les gestionnaires forestiers.
+Ce projet a pour objectif d’automatiser la détermination de catégorie de 
+surface selon la distance de débardage et la pente sur une zone connue. La 
+distance de débardage par rapport à la desserte est classée selon 3 
+catégories : 20 – 50 – 100m (SOURCE IGN d’ELDA). La couche de desserte et le
+MNT sont récupérés à partir du package happign de R (bibliographie). Le 
+traitement a ensuite été réalisé en parallèle avec Rstudio et QGis afin de 
+mener une étude comparative. 
+
 Petite phrase pour dire si oui ou non on y est parvenu ( :
 
 # Méthode

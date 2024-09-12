@@ -37,10 +37,10 @@ mener une étude comparative.
 Petite phrase pour dire si oui ou non on y est parvenu ( :
 
 # Méthode
-## Choix de la zone d'étude
-## Recherche et caractérisation de la desserte
-## Création de buffer autour de la desserte
-## Calcul de la pente
+## Choix de la zone d'étude (Kiks)
+## Recherche et caractérisation de la desserte (Kiks et Louise)
+## Création de buffer autour de la desserte (Louise)
+## Calcul de la pente (Agnès)
 
 ### Pente avec R
 
@@ -58,11 +58,11 @@ La pente a également été calculée à partir de QGis, avec l'outil calcul de 
 
 # Résultats
 
-## Carte de Kiks (parcellaire + desserte à 1km + type de routes)
+## Carte de Kiks (parcellaire + desserte à 1km + type de routes + infrastructures)
 
-## Cartes buffer desserte
+## Cartes buffer desserte (Louise)
 
-## Carte catégorie pentes (R et QGis)
+## Carte catégorie pentes (Elda)
 
 ## Espoir d'une carte de croisement pentes et desserte
 

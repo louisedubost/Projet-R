@@ -16,6 +16,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ![](images/APT_Logo_RVB_Positif.png)
+```{r, include=FALSE}
+citation("happign")
+```
+
 
 # Presentation du projet
 

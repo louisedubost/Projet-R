@@ -294,14 +294,18 @@ verifier.exploitabilite <- function(routes_skidders,
   
   # Boucle pour trouver les connexions indirectes
   repeat {
-    buffer_exploitables <- st_buffer(tous_skidders_exploitables, dist = 5)
-    connexion_indirecte <- st_intersects(skidders_non_connectes, buffer_exploitables, sparse = FALSE)
+    buffer_exploitables <- st_buffer(tous_skidders_exploitables,
+                                     dist = 5)
+    connexion_indirecte <- st_intersects(skidders_non_connectes,
+                                         buffer_exploitables,
+                                         sparse = FALSE)
     
     nouveaux_exploitables <- skidders_non_connectes[rowSums(connexion_indirecte) > 0, ]
     
     if (nrow(nouveaux_exploitables) == 0) break
     
-    tous_skidders_exploitables <- rbind(tous_skidders_exploitables, nouveaux_exploitables)
+    tous_skidders_exploitables <- rbind(tous_skidders_exploitables,
+                                        nouveaux_exploitables)
     skidders_non_connectes <- skidders_non_connectes[rowSums(connexion_indirecte) == 0, ]
   }
   
@@ -478,11 +482,15 @@ Suite à cela, les couches de pentes et de distances sont reclassifiées, afin d
   
   On a alors 2 nouvelles couches définies selon les nouvelles classes crées. On associe ensuite un numéro aux couleurs choisies dans le tableau, de façon à ce que Vert = 1, Jaune = 2, Orange = 3 et Rouge = 4. 
 On doit ensuite créer une nouvelle couche avec l’outil « calculatrice raster » qui associe à chaque pixel la valeur 1,2,3,4 de la couleur correspondante au croisement dans lequel il se trouve. Etant donné que les conditions sont trop lourdes, on doit diviser cela en plusieurs couches, on a ainsi :
-  -	Couche 1 : if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 2, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 3, 2,0)))
-  -	Couche 2 : if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 2, 2, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 3, 3,0)))
-  -	Couche 3 : if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 1, 2, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 2, 3, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 3, 4,0)))
-  -	Couche 4 : if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 1, 3, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 2, 4, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 3, 4,0)))
-  -	Couche 5 : if("couche_reclassifiee_pente@1" >= 5, 4, 0)
+-	Couche 1 : if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 2, 1, if("couche_reclassifiee_pente@1" = 1 and "couche_distance_reclassifiee@1" = 3, 2,0)))
+
+-	Couche 2 : if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 1, 1, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 2, 2, if("couche_reclassifiee_pente@1" = 2 and "couche_distance_reclassifiee@1" = 3, 3,0)))
+
+-	Couche 3 : if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 1, 2, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 2, 3, if("couche_reclassifiee_pente@1" = 3 and "couche_distance_reclassifiee@1" = 3, 4,0)))
+
+-	Couche 4 : if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 1, 3, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 2, 4, if("couche_reclassifiee_pente@1" = 4 and "couche_distance_reclassifiee@1" = 3, 4,0)))
+
+-	Couche 5 : if("couche_reclassifiee_pente@1" >= 5, 4, 0)
             On veut maintenant combiner ces couches ensembles. Pour cela, il faut une couche qui, entre toutes les couches, sélectionne le numéro le plus élevé et attribue cette valeur au pixel concerné. Elle est créé avec « calculatrice raster ». La fonction « MAX » ne fonctionnant pas, la méthode suivante a été utilisée dans la calculatrice : 
   « "couche5_exploit@1" * ("couche5_exploit@1" >= 1) +
   "couche4_exploit@1" * ("couche5_exploit@1" < 1 and "couche4_exploit@1" >= 1) +
@@ -497,27 +505,41 @@ La couche finale est ensuite créée, associant donc des valeurs de 1 à 4 pour 
 
 ## Carte de desserte
 
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+knitr::include_graphics("images/APT_Logo_RVB_Positif.png")
+```
+
 Ci-dessous la carte de la desserte réalisée sur QGis :
-![Carte de la desserte sur la commune de Saxel]("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/Desserte sur la commune de Saxel.pdf")
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("cartes_projet/Desserte sur la commune de Saxel.pdf")
+```
 
 ## Cartes des buffers autours de la desserte
 
 Ci-dessous la carte des buffers réalisée sur R :
-![Carte des buffers sur la commune de Saxel (version R)]("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/map_buffer.pdf")
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("cartes_projet/map_buffer.pdf")
+```
 
 Ci-dessous la carte des buffers réalisée sur QGis :
-![Carte des buffers sur la commune de Saxel (version QGis)]("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/Buffer Saxel.pdf")
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("cartes_projet/Buffer Saxel.pdf")
+```
 
 ## Carte catégories de pentes
 
 Ci-dessous la carte des catégories de pentes réalisée sur QGis :
-![Carte des distances de débardages sur la commune de Saxel]("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/Pentes sur la commune de Saxel.pdf")
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("cartes_projet/Pentes sur la commune de Saxel.pdf")
+```
 
 ## Carte d'exploitabilité
 
 Ci-dessous la carte d'exploitabilité réalisée sur QGis :
-![Carte de l'exploitabilité sur la commune de Saxel]("C:/Users/louis/OneDrive/Documents/AgroParistech/3AA/Cours R/Projet_exploit/Cartes_projet/Exploitabilité Saxel.pdf")
-
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("cartes_projet/Exploitabilité Saxel.pdf")
+```
 
 ## Les limites et perspectives
 

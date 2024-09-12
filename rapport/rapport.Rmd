@@ -34,7 +34,6 @@ MNT sont récupérés à partir du package `happign` [@happign] de R. Le
 traitement a ensuite été réalisé en parallèle avec Rstudio et QGis afin de 
 mener une étude comparative. 
 
-Attention! Mettre à jour la référence IGN! 
 Petite phrase pour dire si oui ou non on y est parvenu ( :
 
 # Méthode

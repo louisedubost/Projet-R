@@ -23,6 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 ```
 
+
 # Présentation du projet
 
 Identifier les zones les plus accessibles et les plus adaptées aux 
@@ -30,7 +31,7 @@ opérations de débardage est essentiel pour les gestionnaires forestiers.
 Ce projet a pour objectif d’automatiser la détermination de catégorie de 
 surface selon la distance de débardage et la pente sur une zone connue. La 
 distance de débardage par rapport à la desserte est classée selon 3 
-catégories : 100 – 200 – 500m [@IGN]. La couche de desserte et le
+catégories : 20 – 50 – 100m [@IGN]. La couche de desserte et le
 MNT sont récupérés à partir du package `happign` [@happign] de R. Le 
 traitement a ensuite été réalisé en parallèle avec Rstudio et QGis afin de 
 mener une étude comparative. 
@@ -565,11 +566,12 @@ section <- list(NULL)
 num_parc <- list(NULL)
 
 get.slope(code_post, libelle, section, num_parc)
+
 ```
 
 ### Calcul des pentes avec QGis et comparaison des deux méthodes
 
-La pente a également été calculée à partir de QGis, avec l'outil calcul de pente. Le MNT utilisé en source est le MNT préalablement téléchargé avec `happign`. Le raster de pentes ainsi obtenu présente des valeurs très proches de celles obtenues avec la fonction `slope()`d'happign. La comparaison des deux rasters "pente" a été réalisée avec la calculatrice raster sur QGis. Les variations entre les deux couches sur la zone d'étude considérée sont de l'ordre de 0,002m. Pour la suite et dans l'objectif de l'automatisation de la démarche, nous utiliserons donc le raster pente issu d'`happign`.
+La pente a également été calculée à partir de QGis, avec l'outil calcul de pente. Le MNT utilisé en source est le MNT préalablement téléchargé avec `happign`. Le raster de pentes ainsi obtenu présente des valeurs très proches de celles obtenues avec la fonction `slope()`d'happign. La comparaison des deux rasters "pente" a été réalisée avec la calculatrice raster sur QGis. Les variations entre les deux couches sur la zone d'étude considérée sont de l'ordre de 0.02m.  Pour la suite et dans l'objectif de l'automatisation de la démarche, nous utiliserons donc le raster pente issu d'`happign`.
 
 ## Création de la carte d'exploitabilité
 
@@ -694,3 +696,12 @@ Une autre piste d'amélioration réside dans l'acquisition de données relatives
 Une piste d'amélioration supplémentaire aurait été d'indiquer en sortie de la fonction principale modes d'exploitation possibles compte tenu des différentes contraintes topographiques et liées aux infrastructures routières.
 
 L'utilisation des données de desserte provenant d'OpenStreetMap (OSM) présente des limitations notables. Ces données sont souvent incomplètes, difficiles à extraire, et principalement localisées sur les grands axes routiers et en zones urbaines. Bien qu'OSM puisse être pertinent pour des projets urbains, son utilisation dans les contextes forestiers est inadaptée. En revanche, les données de l'IGN offrent une couverture plus exhaustive et précise, notamment pour les zones rurales et forestières. Elles se superposent souvent aux données OSM, mais surpassent ces dernières en termes de qualité et de fiabilité pour les projets non urbains.
+
+
+
+```{r, echo=FALSE, fig.align='center', out.width='100%'}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+knitr::include_graphics("images/photo_groupe.jpg")
+```
+
+

@@ -652,15 +652,15 @@ Ci-dessous la carte d'exploitabilité réalisée sur QGis :
 knitr::include_graphics("cartes_projet/Exploitabilité Saxel.pdf")
 ```
 
-## Les limites et perspectives
+# Les limites et perspectives
 
-### L'otimisation des calculs de pente
+## L'optimisation des calculs de pente
 
 Bien que deux méthodes de calcul des pentes aient été testées, le MNT utilisé fut toujours le même, à savoir "ELEVATION.ELEVATIONGRIDCOVERAGE" issu de la BD Alti de l'IGN. D'autres sources de MNT pourraient être testées, comme par exemple le RGE ALTI ou le MNT recalculé avec les données LIDAR.
 De plus, la résolution spatiale utilisée dans l'exemple de ce rapport est de 25m. Il pourrait être envisagé d'intégrer la résolution comme argument de la fonction finale afin de pouvoir l'ajuster selon l'échelle considérée. 
 
 
-# Optimisation de la carte d'exploitabilité 
+## Optimisation de la carte d'exploitabilité 
 
 Les cartes d'exploitabilité pourraient être améliorées ; la méthode suivante fonctionne car il n'y a que 4 valeurs d'exploitabilité possible, mais s'il y avait eu plus de nuances, cette méthode aurait certainement été trop lourde. 
 

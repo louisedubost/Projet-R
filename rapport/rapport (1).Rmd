@@ -569,7 +569,7 @@ get.slope(code_post, libelle, section, num_parc)
 
 ### Calcul des pentes avec QGis et comparaison des deux méthodes
 
-La pente a également été calculée à partir de QGis, avec l'outil calcul de pente. Le MNT utilisé en source est le MNT préalablement téléchargé avec `happign`. Le raster de pentes ainsi obtenu présente des valeurs très proches de celles obtenues avec la fonction `slope()`d'happign. La comparaison des deux rasters "pente" a été réalisée avec la calculatrice raster sur QGis. Les variations entre les deux couches sur la zone d'étude considérée sont comprises entre ... et .... Pour la suite et dans l'objectif de l'automatisation de la démarche, nous utiliserons donc le raster pente issu d'`happign`.
+La pente a également été calculée à partir de QGis, avec l'outil calcul de pente. Le MNT utilisé en source est le MNT préalablement téléchargé avec `happign`. Le raster de pentes ainsi obtenu présente des valeurs très proches de celles obtenues avec la fonction `slope()`d'happign. La comparaison des deux rasters "pente" a été réalisée avec la calculatrice raster sur QGis. Les variations entre les deux couches sur la zone d'étude considérée sont de l'ordre de 0,002m. Pour la suite et dans l'objectif de l'automatisation de la démarche, nous utiliserons donc le raster pente issu d'`happign`.
 
 ## Création de la carte d'exploitabilité
 
